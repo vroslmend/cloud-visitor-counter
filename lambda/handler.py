@@ -37,7 +37,12 @@ def _response(status: int, body: dict) -> dict:
 
 
 def _read(counter_id: str) -> int:
-    item = _table.get_item(Key={"id": counter_id}).get("Item")
+    # Strongly consistent so a read right after an increment can't return a
+    # stale value from a replica that hasn't caught up yet. Without this, a
+    # GET that races a just-committed hit can return the pre-increment count.
+    item = _table.get_item(
+        Key={"id": counter_id}, ConsistentRead=True
+    ).get("Item")
     return int(item["count"]) if item and "count" in item else 0
 
 
