@@ -1,0 +1,3 @@
+# Keep the Lambda source LF everywhere so the Terraform archive_file zip
+# hashes identically on Windows (local) and Linux (CI) — no phantom diffs.
+lambda/*.py text eol=lf
