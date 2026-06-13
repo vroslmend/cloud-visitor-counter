@@ -20,6 +20,9 @@ data "archive_file" "lambda" {
   type        = "zip"
   source_file = "${path.module}/../lambda/handler.py"
   output_path = "${path.module}/lambda.zip"
+  # Normalize the file mode so the zip hashes identically whether it's built
+  # on Windows (local) or Linux (CI) — otherwise CI sees a phantom update.
+  output_file_mode = "0644"
 }
 
 # ---------------------------------------------------------------------------

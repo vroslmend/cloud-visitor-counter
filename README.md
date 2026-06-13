@@ -38,7 +38,7 @@ Only `visits` and `prius` are accepted; anything else returns `400`.
 
 ## Stack
 
-AWS (Lambda · API Gateway · DynamoDB · IAM) · Terraform · Python · pytest + moto
+AWS (Lambda · API Gateway · DynamoDB · IAM) · Terraform · Python · pytest + moto · GitHub Actions (OIDC)
 
 ## Tests
 
@@ -50,13 +50,56 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
+## Continuous deployment
+
+GitHub Actions runs everything; no AWS keys are stored anywhere. Each run
+swaps a short-lived GitHub OIDC token for temporary AWS credentials by
+assuming a dedicated IAM role that only this repo can assume.
+
+- **Pull requests** ([`ci.yml`](.github/workflows/ci.yml)) — run the tests,
+  then `terraform fmt`/`validate` and a read-only `plan`, so infra changes
+  show up in the PR before anything is applied.
+- **Push to `main`** ([`deploy.yml`](.github/workflows/deploy.yml)) — run the
+  tests, then `terraform apply`.
+
+State lives in S3 (with a native lock object) so local runs and CI share one
+source of truth.
+
 ## Deploy
 
-Needs AWS credentials configured (`aws configure`) and Terraform installed.
+Needs AWS credentials configured (`aws configure`) and Terraform ≥ 1.11.
+
+### One-time bootstrap
+
+The S3 state bucket must exist before the first `init`, and the CI role has
+to be created once with your own (admin) credentials:
+
+```bash
+# 1. create the remote-state bucket (must match versions.tf)
+aws s3api create-bucket --bucket portfolio-counter-tfstate-aps1 \
+  --region ap-south-1 \
+  --create-bucket-configuration LocationConstraint=ap-south-1
+aws s3api put-bucket-versioning --bucket portfolio-counter-tfstate-aps1 \
+  --versioning-configuration Status=Enabled
+
+# 2. point Terraform at the new backend (copies existing local state up)
+cd infra
+terraform init -migrate-state
+
+# 3. create the OIDC provider + CI role, then read back the role ARN
+terraform apply
+terraform output -raw ci_role_arn
+
+# 4. hand that ARN to GitHub Actions as a (non-secret) repo variable
+gh variable set AWS_ROLE_ARN -R vroslmend/cloud-visitor-counter --body "<ci_role_arn>"
+```
+
+After that, pushes to `main` deploy themselves.
+
+### Day-to-day
 
 ```bash
 cd infra
-terraform init
 terraform apply        # prints the API base URL
 terraform destroy      # removes everything when you're done
 ```

@@ -15,3 +15,9 @@ variable "allowed_origins" {
   type        = list(string)
   default     = ["https://ammarhassan.dev", "http://localhost:3000"]
 }
+
+variable "github_repo" {
+  description = "owner/name of the GitHub repo allowed to assume the CI role via OIDC"
+  type        = string
+  default     = "vroslmend/cloud-visitor-counter"
+}
