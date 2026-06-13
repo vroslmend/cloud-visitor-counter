@@ -13,7 +13,6 @@ venv/
 !example.tfvars
 crash.log
 lambda.zip
-.terraform.lock.hcl
 
 # os
 .DS_Store
