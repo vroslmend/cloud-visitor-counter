@@ -63,6 +63,5 @@ terraform destroy      # removes everything when you're done
 
 ## Notes
 
-- Visits are counted **once per browser session** by the frontend — no cookies,
-  no personal data, just a number.
+- Visits are counted **once per browser session** by the frontend.
 - At portfolio traffic this runs comfortably inside the AWS free tier.
