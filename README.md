@@ -2,9 +2,9 @@
 
 [![deploy](https://github.com/vroslmend/cloud-visitor-counter/actions/workflows/deploy.yml/badge.svg)](https://github.com/vroslmend/cloud-visitor-counter/actions/workflows/deploy.yml)
 
-A small serverless backend that powers the live stats in the footer of
-[ammarhassan.dev](https://ammarhassan.dev) - built on AWS with Terraform, in
-the spirit of the [Cloud Resume Challenge](https://cloudresumechallenge.dev/).
+A small serverless backend that powers the live stats that slide up past the
+bottom of [ammarhassan.dev](https://ammarhassan.dev) - built on AWS with
+Terraform, in the spirit of the [Cloud Resume Challenge](https://cloudresumechallenge.dev/).
 
 It keeps two counters:
 
