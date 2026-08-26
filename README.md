@@ -127,7 +127,7 @@ portfolio traffic that is cents a year, but it is not zero.
 `infra/budget.tf` sets a monthly budget that mails at $1, so the day this stops
 being effectively free arrives as a notification rather than a surprise. It is
 account wide, because nothing in this stack carries tags for a cost filter to
-match on. Two budgets per account are free.
+match on. Cost budgets that only notify are free and unlimited.
 
 ## Notes
 

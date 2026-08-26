@@ -5,7 +5,8 @@
 # cost filter has nothing to match on. That is fine while this is the only
 # stack in the account, and wrong the moment it isn't.
 #
-# Two budgets per account are free. This is the first.
+# Cost budgets with email notification are free and unlimited. Only
+# action-enabled budgets are metered, and this one takes no actions.
 # ---------------------------------------------------------------------------
 resource "aws_budgets_budget" "monthly" {
   name         = "${var.project}-monthly"
