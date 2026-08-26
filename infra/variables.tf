@@ -21,3 +21,15 @@ variable "github_repo" {
   type        = string
   default     = "vroslmend/cloud-visitor-counter"
 }
+
+variable "alert_email" {
+  description = "Where budget alerts go. AWS sends a subscription confirmation here once."
+  type        = string
+  default     = "ammarhassan.amr@gmail.com"
+}
+
+variable "budget_limit_usd" {
+  description = "Monthly spend that trips the alert. This stack should cost cents."
+  type        = string
+  default     = "1"
+}

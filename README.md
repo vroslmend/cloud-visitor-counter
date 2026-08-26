@@ -16,10 +16,17 @@ race each other.
 
 ## Architecture
 
-```
-browser ──fetch──▶ API Gateway (HTTP API) ──▶ Lambda (Python 3.12) ──▶ DynamoDB
-                                                                        { id: "visits" }
-                                                                        { id: "prius"  }
+```mermaid
+flowchart LR
+    browser["browser"]
+    api["API Gateway<br/>HTTP API"]
+    fn["Lambda<br/>Python 3.12"]
+    db[("DynamoDB<br/>id: visits<br/>id: prius")]
+
+    browser -->|"GET /counts"| api
+    browser -->|"POST /counts/{id}/hit"| api
+    api --> fn
+    fn -->|"atomic ADD"| db
 ```
 
 - **DynamoDB** (on-demand) stores the counts — one item per counter.
@@ -106,7 +113,22 @@ terraform apply        # prints the API base URL
 terraform destroy      # removes everything when you're done
 ```
 
+## Cost
+
+Lambda and CloudWatch sit inside the always-free tier at this traffic, and log
+retention is capped at 14 days so the log group cannot quietly grow into a
+bill. DynamoDB storage is free under 25GB, though on-demand requests are billed
+at a fraction of a cent.
+
+API Gateway is the one to watch. Its free allowance runs for 12 months rather
+than forever, after which HTTP API requests cost about $1 per million. At
+portfolio traffic that is cents a year, but it is not zero.
+
+`infra/budget.tf` sets a monthly budget that mails at $1, so the day this stops
+being effectively free arrives as a notification rather than a surprise. It is
+account wide, because nothing in this stack carries tags for a cost filter to
+match on. Two budgets per account are free.
+
 ## Notes
 
 - Visits are counted **once per browser session** by the frontend.
-- At portfolio traffic this runs comfortably inside the AWS free tier.

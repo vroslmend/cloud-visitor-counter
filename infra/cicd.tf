@@ -136,6 +136,13 @@ data "aws_iam_policy_document" "ci_policy" {
     actions   = ["iam:PassRole"]
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-lambda-role"]
   }
+
+  # Budgets is a global service, so its ARN carries no region.
+  statement {
+    sid       = "Budget"
+    actions   = ["budgets:ViewBudget", "budgets:ModifyBudget"]
+    resources = ["arn:aws:budgets::${data.aws_caller_identity.current.account_id}:budget/${var.project}-monthly"]
+  }
 }
 
 resource "aws_iam_role_policy" "ci" {
