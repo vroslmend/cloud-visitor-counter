@@ -137,10 +137,18 @@ data "aws_iam_policy_document" "ci_policy" {
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-lambda-role"]
   }
 
-  # Budgets is a global service, so its ARN carries no region.
+  # Budgets is a global service, so its ARN carries no region. The tag actions
+  # are needed even though nothing here is tagged: the provider reads tags back
+  # after every create.
   statement {
-    sid       = "Budget"
-    actions   = ["budgets:ViewBudget", "budgets:ModifyBudget"]
+    sid = "Budget"
+    actions = [
+      "budgets:ViewBudget",
+      "budgets:ModifyBudget",
+      "budgets:TagResource",
+      "budgets:UntagResource",
+      "budgets:ListTagsForResource",
+    ]
     resources = ["arn:aws:budgets::${data.aws_caller_identity.current.account_id}:budget/${var.project}-monthly"]
   }
 }
