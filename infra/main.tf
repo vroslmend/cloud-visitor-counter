@@ -132,6 +132,15 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http.id
   name        = "$default"
   auto_deploy = true
+
+  # Without this the account default applies, which is 10,000 requests per
+  # second. AWS has no hard spending cap, so an unthrottled public endpoint is
+  # the only place this stack can generate a real bill. A throttled request is
+  # rejected at the gateway and never reaches Lambda or DynamoDB.
+  default_route_settings {
+    throttling_rate_limit  = var.throttle_rate_limit
+    throttling_burst_limit = var.throttle_burst_limit
+  }
 }
 
 resource "aws_lambda_permission" "apigw" {

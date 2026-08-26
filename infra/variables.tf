@@ -33,3 +33,18 @@ variable "budget_limit_usd" {
   type        = string
   default     = "1"
 }
+
+# Real traffic is a few hundred requests a day. These are set orders of
+# magnitude above that, and low enough that a bot hammering the endpoint costs
+# pennies rather than hundreds. Raise them if legitimate traffic ever sees 429s.
+variable "throttle_rate_limit" {
+  description = "Sustained requests per second the API will serve before returning 429"
+  type        = number
+  default     = 2
+}
+
+variable "throttle_burst_limit" {
+  description = "Requests served in an instantaneous burst before the rate limit applies"
+  type        = number
+  default     = 10
+}
