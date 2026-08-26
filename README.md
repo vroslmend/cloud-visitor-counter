@@ -8,8 +8,8 @@ Terraform, in the spirit of the [Cloud Resume Challenge](https://cloudresumechal
 
 It keeps two counters:
 
-- **`visits`** — total visits to the site
-- **`prius`** — how many times the Prius easter egg has been driven
+- **`visits`**: total visits to the site
+- **`prius`**: how many times the Prius easter egg has been driven
 
 Both live in DynamoDB and are incremented atomically, so concurrent hits never
 race each other.
@@ -29,10 +29,10 @@ flowchart LR
     fn -->|"atomic ADD"| db
 ```
 
-- **DynamoDB** (on-demand) stores the counts — one item per counter.
+- **DynamoDB** (on-demand) stores the counts, one item per counter.
 - **Lambda** reads and increments via an atomic `ADD` expression.
 - **API Gateway** (HTTP API) exposes it, with CORS locked to the site's origins.
-- **IAM** grants the function least privilege — only `GetItem`/`UpdateItem` on
+- **IAM** grants the function least privilege: only `GetItem`/`UpdateItem` on
   this one table, plus permission to write its own logs.
 - **Terraform** provisions every piece; tear it all down with one command.
 
@@ -41,7 +41,7 @@ flowchart LR
 | Method | Path               | Response                      |
 | ------ | ------------------ | ----------------------------- |
 | `GET`  | `/counts`          | `{ "prius": N, "visits": N }` |
-| `POST` | `/counts/{id}/hit` | `{ "<id>": N }` — atomic +1   |
+| `POST` | `/counts/{id}/hit` | `{ "<id>": N }`, atomic +1    |
 
 Only `visits` and `prius` are accepted; anything else returns `400`.
 
@@ -65,10 +65,10 @@ GitHub Actions runs everything; no AWS keys are stored anywhere. Each run
 swaps a short-lived GitHub OIDC token for temporary AWS credentials by
 assuming a dedicated IAM role that only this repo can assume.
 
-- **Pull requests** ([`ci.yml`](.github/workflows/ci.yml)) — run the tests,
+- **Pull requests** ([`ci.yml`](.github/workflows/ci.yml)) run the tests,
   then `terraform fmt`/`validate` and a read-only `plan`, so infra changes
   show up in the PR before anything is applied.
-- **Push to `main`** ([`deploy.yml`](.github/workflows/deploy.yml)) — run the
+- **Push to `main`** ([`deploy.yml`](.github/workflows/deploy.yml)) run the
   tests, then `terraform apply`.
 
 State lives in S3 (with a native lock object) so local runs and CI share one
