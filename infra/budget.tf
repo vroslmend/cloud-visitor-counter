@@ -9,6 +9,11 @@
 # action-enabled budgets are metered, and this one takes no actions.
 # ---------------------------------------------------------------------------
 resource "aws_budgets_budget" "monthly" {
+  # Terraform sees no link between this and the policy that permits creating
+  # it, so on a clean apply it runs first and CI fails with AccessDenied on
+  # budgets:ModifyBudget. Ordering it after the policy is the fix.
+  depends_on = [aws_iam_role_policy.ci]
+
   name         = "${var.project}-monthly"
   budget_type  = "COST"
   limit_amount = var.budget_limit_usd
