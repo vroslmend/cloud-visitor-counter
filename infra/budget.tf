@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Budget — a tripwire for the day this stack stops being free.
+# Budget: a tripwire for the day this stack stops being free.
 #
 # Account wide, not scoped to this project: nothing here carries tags, so a
 # cost filter has nothing to match on. That is fine while this is the only

@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# DynamoDB — one table, one item per counter ({ id: "visits" }, { id: "prius" })
+# DynamoDB: one table, one item per counter ({ id: "visits" }, { id: "prius" })
 # On-demand billing: no capacity to manage, pay per request, free-tier friendly.
 # ---------------------------------------------------------------------------
 resource "aws_dynamodb_table" "counter" {
@@ -14,19 +14,19 @@ resource "aws_dynamodb_table" "counter" {
 }
 
 # ---------------------------------------------------------------------------
-# Lambda packaging — zip the single handler file (boto3 ships in the runtime)
+# Lambda packaging: zip the single handler file (boto3 ships in the runtime)
 # ---------------------------------------------------------------------------
 data "archive_file" "lambda" {
   type        = "zip"
   source_file = "${path.module}/../lambda/handler.py"
   output_path = "${path.module}/lambda.zip"
   # Normalize the file mode so the zip hashes identically whether it's built
-  # on Windows (local) or Linux (CI) — otherwise CI sees a phantom update.
+  # on Windows (local) or Linux (CI), otherwise CI sees a phantom update.
   output_file_mode = "0644"
 }
 
 # ---------------------------------------------------------------------------
-# IAM — execution role with least-privilege: write its own logs, and only
+# IAM: execution role with least-privilege: write its own logs, and only
 # GetItem/UpdateItem on this one table.
 # ---------------------------------------------------------------------------
 data "aws_iam_policy_document" "assume" {
@@ -95,7 +95,7 @@ resource "aws_lambda_function" "counter" {
 }
 
 # ---------------------------------------------------------------------------
-# API Gateway — HTTP API (cheaper/simpler than REST), CORS locked to the site
+# API Gateway: HTTP API (cheaper/simpler than REST), CORS locked to the site
 # ---------------------------------------------------------------------------
 resource "aws_apigatewayv2_api" "http" {
   name          = "${var.project}-api"

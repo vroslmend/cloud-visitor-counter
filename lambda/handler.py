@@ -21,7 +21,7 @@ import os
 import boto3
 
 TABLE_NAME = os.environ.get("TABLE_NAME", "portfolio-counter")
-# Only these counters may be created/incremented — stops anyone from
+# Only these counters may be created/incremented. Stops anyone from
 # spraying arbitrary keys into the table via the public endpoint.
 ALLOWED = ("prius", "visits")
 
@@ -73,5 +73,6 @@ def handler(event, _context):
             return _response(200, {counter_id: _increment(counter_id)})
 
         return _response(404, {"error": "not found"})
-    except Exception:  # noqa: BLE001 — never leak internals to the public endpoint
+    except Exception:  # noqa: BLE001
+        # Never leak internals out of the public endpoint.
         return _response(500, {"error": "internal error"})

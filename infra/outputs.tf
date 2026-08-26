@@ -9,6 +9,6 @@ output "dynamodb_table" {
 }
 
 output "ci_role_arn" {
-  description = "ARN GitHub Actions assumes via OIDC — set as the AWS_ROLE_ARN repo variable"
+  description = "ARN GitHub Actions assumes via OIDC. Set as the AWS_ROLE_ARN repo variable"
   value       = aws_iam_role.ci.arn
 }

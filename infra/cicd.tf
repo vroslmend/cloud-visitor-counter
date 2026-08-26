@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# CI/CD auth — GitHub Actions assumes an IAM role via OpenID Connect.
+# CI/CD auth: GitHub Actions assumes an IAM role via OpenID Connect.
 # No access keys are ever stored in GitHub: each workflow run swaps a
 # short-lived GitHub OIDC token for temporary AWS credentials.
 # ---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 # Who may assume the CI role: only this repo, and only from a push to main
-# or a pull request — not arbitrary branches or other repositories.
+# or a pull request, not arbitrary branches or other repositories.
 data "aws_iam_policy_document" "ci_assume" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
